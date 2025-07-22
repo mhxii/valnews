@@ -6,26 +6,41 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['titre'])) {
-    $titre = $_POST['titre'];
-    $contenu = $_POST['contenu'];
-    $rubrique = (int)$_POST['rubrique'];
+// if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['titre'])) {
+//     $titre = $_POST['titre'];
+//     $contenu = $_POST['contenu'];
+//     $rubrique = (int)$_POST['rubrique'];
 
-    $query = "INSERT INTO articles (titre, contenu, id_rubrique) VALUES (?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "ssi", $titre, $contenu, $rubrique);
-    mysqli_stmt_execute($stmt);
-    $message = "Article ajoute avec succes";
-}
+//     $query = "INSERT INTO articles (titre, contenu, id_rubrique) VALUES (?, ?, ?)";
+//     $stmt = mysqli_prepare($conn, $query);
+//     mysqli_stmt_bind_param($stmt, "ssi", $titre, $contenu, $rubrique);
+//     mysqli_stmt_execute($stmt);
+//     $message = "Article ajoute avec succes";
+// }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nom_rubrique'])) {
-    $nom = $_POST['nom_rubrique'];
-    $query = "INSERT INTO rubriques (nom) VALUES (?)";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $nom);
-    mysqli_stmt_execute($stmt);
-    $msg_rub = "Rubrique ajoutee avec succes";
-}
+include_once("ajoutArticle.php");
+include_once("ajoutRubrique.php");
+
+// if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nom_rubrique'])) {
+//     $nom = $_POST['nom_rubrique'];
+
+//     $query_verif = "SELECT * FROM rubriques WHERE nom=?";
+//     $stmt = mysqli_prepare($conn, $query_verif);
+//     mysqli_stmt_bind_param($stmt, "s", $nom);
+//     mysqli_stmt_execute($stmt);
+//     $result = mysqli_stmt_get_result($stmt);
+
+//     if (mysqli_num_rows($result) != 0) {
+//         $msg_rub_error = "Rubrique $nom existe deja";
+//     } else {
+//         $query = "INSERT INTO rubriques (nom) VALUES (?)";
+//         $stmt = mysqli_prepare($conn, $query);
+//         mysqli_stmt_bind_param($stmt, "s", $nom);
+//         mysqli_stmt_execute($stmt);
+//         $msg_rub_succes = "Rubrique ajoutee avec succes";
+//     }
+// }
+
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +79,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['nom_rubrique'])) {
     <hr class="my-5">
 
     <h2>Ajouter une rubrique</h2>
-    <?php if (isset($msg_rub)) echo "<div class='alert alert-success'>$msg_rub</div>"; ?>
+    <?php if (isset($msg_rub_succes)) echo "<div class='alert alert-success'>$msg_rub_succes</div>"; ?>
+    <?php if (isset($msg_rub_error)) echo "<div class='alert alert-danger'>$msg_rub_error</div>"; ?>
     <form method="post">
         <div class="mb-3">
             <label class="form-label">Nom de la rubrique</label>
