@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $password = "";
-$dbname = "val_news";
+$dbname = "mglsi_news";
 
 $conn = mysqli_connect($host, $user, $password, $dbname);
 
