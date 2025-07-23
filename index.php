@@ -1,74 +1,39 @@
-<?php include("config.php"); ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Accueil - ValNews</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+<?php
+require_once 'modele/config.php';
+require_once 'controleur/ArticleControleur.php';
+require_once 'controleur/CategorieControleur.php';
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="index.php">ValNews</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navRubriques">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navRubriques">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link <?= !isset($_GET['categorie']) ? 'active' : '' ?>" href="index.php">Toutes les categories</a>
-                </li>
-                <?php
-                $categories = mysqli_query($conn, "SELECT * FROM Categorie");
-                while ($cat = mysqli_fetch_assoc($categories)) {
-                    $active = (isset($_GET['categorie']) && $_GET['categorie'] == $cat['id']) ? "active" : "";
-                    echo "<li class='nav-item'>
-                            <a class='nav-link $active' href='?categorie={$cat['id']}'>{$cat['libelle']}</a>
-                          </li>";
-                }
-                ?>
-            </ul>
-        </div>
-    </div>
-</nav>
+$action = $_GET['action'] ?? 'accueil';
+$controller = $_GET['controller'] ?? 'article';
 
-<div class="container mt-4">
-    <?php
-    if (isset($_GET['categorie'])) {
-        $id_categorie = (int)$_GET['categorie'];
-        $cat_query = mysqli_query($conn, "SELECT libelle FROM Categorie WHERE id = $id_categorie");
-        $cat_fetch = mysqli_fetch_assoc($cat_query);
-        echo "<h2 class='mb-4'>Categorie : {$cat_fetch['libelle']}</h2>";
-        $cat_selected = "WHERE a.categorie = $id_categorie";
-    } else {
-        echo "<h2 class='mb-4'>Toutes les actualites</h2>";
-        $cat_selected = "";
-    }
+switch ($controller) {
+    case 'article':
+        $controller = new ArticleControleur();
+        break;
+    case 'categorie':
+        $controller = new CategorieControleur();
+        break;
+    default:
+        $controller = new ArticleControleur();
+}
 
-    $query = "SELECT a.titre, a.contenu, a.dateCreation, c.libelle AS categorie
-              FROM Article a
-              LEFT JOIN Categorie c ON a.categorie = c.id
-              $cat_selected
-              ORDER BY a.dateCreation DESC";
-    $result = mysqli_query($conn, $query);
-
-    if (mysqli_num_rows($result) === 0) {
-        echo "<div class='alert alert-info'>Aucune actualite disponible pour cette categorie.</div>";
-    }
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo "<div class='card mb-3'>
-                <div class='card-body'>
-                    <h5 class='card-title'>{$row['titre']}</h5>
-                    <h6 class='card-subtitle mb-2 text-muted'>Categorie: {$row['categorie']}</h6>
-                    <p class='card-text'>{$row['contenu']}</p>
-                    <small class='text-muted'>Publie le: {$row['dateCreation']}</small>
-                </div>
-              </div>";
-    }
-    ?>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+switch ($action) {
+    case 'ajouter':
+        $controller->ajouter();
+        break;
+    case 'modifier':
+        $controller->modifier();
+        break;
+    case 'supprimer':
+        $controller->supprimer();
+        break;
+    case 'admin':
+        $controller->admin();
+        break;
+    case 'categorie':
+        $controller->parCategorie();
+        break;
+    default:
+        $controller->accueil();
+}
+?>
