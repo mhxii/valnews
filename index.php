@@ -18,6 +18,9 @@ switch ($controller) {
 }
 
 switch ($action) {
+    case 'voir':
+        $controller->voir();
+        break;
     case 'ajouter':
         $controller->ajouter();
         break;

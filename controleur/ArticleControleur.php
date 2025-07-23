@@ -13,12 +13,25 @@ class ArticleControleur {
     }
 
     public function parCategorie() {
-    $id_categorie = intval($_GET['categorie']);
-    $articles = $this->articleModel->getByCategorie($id_categorie);
-    $categories = $this->categorieModel->getAll();
-    $currentCategorie = $this->categorieModel->getById($id_categorie);
-    
-    require_once __DIR__ . '/../vue/public/index.php';
+        $id_categorie = intval($_GET['categorie']);
+        $articles = $this->articleModel->getByCategorie($id_categorie);
+        $categories = $this->categorieModel->getAll();
+        $currentCategorie = $this->categorieModel->getById($id_categorie);
+        
+        require_once __DIR__ . '/../vue/public/index.php';
+    }
+
+    public function voir() {
+        $id = intval($_GET['id']);
+        $article = $this->articleModel->getById($id);
+        
+        if (!$article || mysqli_num_rows($article) === 0) {
+            header("Location: index.php");
+            exit;
+        }
+        
+        $article = mysqli_fetch_assoc($article);
+        require_once __DIR__ . '/../vue/public/detailArticle.php';
     }
 
     public function accueil() {
